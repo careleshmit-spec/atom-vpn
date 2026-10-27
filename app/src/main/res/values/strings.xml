@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ATOM VPN</string>
+    <string name="channel_vpn_name">VPN Connection</string>
+    <string name="channel_vpn_description">ATOM VPN tunnel status notifications</string>
+    <string name="notification_connected">Tunnel Active</string>
+    <string name="notification_connecting">Establishing Secure Tunnel…</string>
+    <string name="notification_disconnected">System Offline</string>
+</resources>
