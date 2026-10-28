@@ -16,44 +16,44 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Download Gradle wrapper jar if missing
+        run: |
+          if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
+            echo "Downloading gradle-wrapper.jar..."
+            curl -L -o gradle/wrapper/gradle-wrapper.jar \
+              "https://github.com/gradle/gradle/raw/v8.4.0/gradle/wrapper/gradle-wrapper.jar"
+          fi
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace
+        run: ./gradlew assembleDebug --stacktrace --no-daemon
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: atom-vpn-debug
+          name: ATOM-VPN-debug
           path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
 
-      - name: Create GitHub Release
+      - name: Create GitHub Release with APK
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           name: "\u26a1 ATOM VPN ${{ github.ref_name }}"
           body: |
             ## \u26a1 ATOM VPN ${{ github.ref_name }}
-
-            ### \ud83d\udce5 دانلود
-            فایل `app-debug.apk` رو از بخش Assets پایین همین صفحه دانلود کن.
-
-            ### \ud83d\udcf1 نیازمندی‌ها
-            - Android 8.0 (API 26) یا بالاتر
-
-            ### \u26a0\ufe0f توجه
-            این یک Debug APK است. برای نصب باید **Unknown Sources** را در تنظیمات Android فعال کنی.
-
-            ### \ud83d\udcdc License
-            MIT
+            APK آماده دانلود است. فایل `app-debug.apk` رو از بخش **Assets** پایین دانلود کن.
+            > Android 8.0+ | MIT License
           files: app/build/outputs/apk/debug/app-debug.apk
           draft: false
           prerelease: false
