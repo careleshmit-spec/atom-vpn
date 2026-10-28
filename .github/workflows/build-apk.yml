@@ -21,22 +21,16 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Gradle
+      - name: Install Gradle 8.4 directly
         uses: gradle/actions/setup-gradle@v4
-
-      - name: Download Gradle wrapper jar if missing
-        run: |
-          if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
-            echo "Downloading gradle-wrapper.jar..."
-            curl -L -o gradle/wrapper/gradle-wrapper.jar \
-              "https://github.com/gradle/gradle/raw/v8.4.0/gradle/wrapper/gradle-wrapper.jar"
-          fi
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+        with:
+          gradle-version: '8.4'
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace --no-daemon
+        run: gradle assembleDebug --stacktrace --no-daemon
+
+      - name: Show APK path
+        run: find . -name '*.apk' 2>/dev/null
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
@@ -52,7 +46,8 @@ jobs:
           name: "\u26a1 ATOM VPN ${{ github.ref_name }}"
           body: |
             ## \u26a1 ATOM VPN ${{ github.ref_name }}
-            APK آماده دانلود است. فایل `app-debug.apk` رو از بخش **Assets** پایین دانلود کن.
+            APK آماده دانلود است.
+            فایل `app-debug.apk` رو از بخش **Assets** پایین دانلود کن.
             > Android 8.0+ | MIT License
           files: app/build/outputs/apk/debug/app-debug.apk
           draft: false
